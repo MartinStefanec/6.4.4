@@ -31,21 +31,21 @@ LOWL *lowl_create_random(unsigned int size){
 	list = lowl_create_empty();
 	if(list == NULL)
 	return NULL;
+	list->beg=malloc(sizeof(OWN));
+	list->cur=list->beg;
 	for(i=1;i<=size;i++){
-		list->cur=malloc(sizeof(OWN));
-		list->cur->next=malloc(sizeof(OWN));
-		if(i==1){
-			list->beg=list->cur;
-		}
 		list->cur->data =rand()%10;
-		printf("%f, ",list->cur->data);
-		if(i<size) 	
-				list->cur =list->cur->next; 
+//		printf("%f, ",list->cur->data);
+		if(i<size){
+			list->cur->next=malloc(sizeof(OWN));
+			list->cur =list->cur->next; 
+		} 	
 			else 
 				list->cur->next=NULL;
 	}
 	return list;
 }
+
 
 void lowl_destroy(LOWL *list){
 	list->cur=list->beg;
@@ -54,21 +54,18 @@ void lowl_destroy(LOWL *list){
 		adress=list->cur->next;
 		free(list->cur);
 		list->cur=adress;
-	}
+	}	
 	while(list->cur->next!=NULL);
 	free(list);
 }
 
 void lowl_print(LOWL *list){
-	list->cur=list->beg;
-
-	do {
-		printf("%f ",list->cur->data);
-		if(list->cur->next!=NULL){
-			list->cur=list->cur->next;
-		}	
-	}
-	while(list->cur->next!=NULL);
+	OWN *pomocne;
+	pomocne=list->beg;
+	while(pomocne!=NULL) {
+		printf("%f ",pomocne->data);
+		pomocne=(OWN*) pomocne->next;	
+		}
 }
 
 char lowl_cur_step_left(LOWL *list);
@@ -81,7 +78,5 @@ char lowl_delete(LOWL* list);
 main(){
 	LOWL *line;
 	line=lowl_create_random(5);
-	printf("\n");
-
 	lowl_print(line);
 }
