@@ -19,11 +19,9 @@ LOWL *lowl_create_empty (void){
 	if(list == NULL)
 	return NULL;
 	list->cur = NULL;
-	return list;
 	list->beg = NULL;
 	return list;
 }
-
 LOWL *lowl_create_random(unsigned int size){
 	srand(time(0));
 	int i;
@@ -47,8 +45,6 @@ LOWL *lowl_create_random(unsigned int size){
 	}
 	return list;
 }
-
-
 void lowl_destroy(LOWL *list){
 	list->cur=list->beg;
 	OWN *adress;
@@ -60,7 +56,6 @@ void lowl_destroy(LOWL *list){
 	while(list->cur->next!=NULL);
 	free(list);
 }
-
 void lowl_print(LOWL *list){
 	OWN *pomocne;
 	
@@ -79,7 +74,6 @@ void lowl_print(LOWL *list){
 			}
 		}
 }
-
 char lowl_cur_step_left(LOWL *list){
 	OWN *pomocne;
 	
@@ -90,11 +84,9 @@ char lowl_cur_step_left(LOWL *list){
 	else{
 		pomocne=list->cur;
 		list->cur=list->beg;
-		do{
-			list->cur=list->cur->next;	
-		} while(
-			list->cur->next!=pomocne
-		);
+		while(list->cur->next!=pomocne){
+			list->cur=list->cur->next;
+		};
 		
 		printf("\nLOWL_SUCCESS");
 		return 1;
@@ -111,17 +103,57 @@ char lowl_cur_step_right(LOWL *list){
 		return 1;
 	}
 }
-OWN *lowl_insert_left(LOWL* list, float val);
+OWN *lowl_insert_left(LOWL* list, float val){
+	OWN *pomocne,*pomocne2;
+	
+	pomocne=malloc(sizeof(OWN));
+	pomocne2=malloc(sizeof(OWN));
+	if(list->beg==NULL || list->cur==NULL){
+		pomocne->data=val;
+		pomocne->next=NULL;
+		list->beg=pomocne;
+		list->cur=pomocne;
+	}else{
+		if(list->beg==list->cur){
+			pomocne=list->cur;
+			pomocne2->data=val;
+			pomocne2->next=pomocne;
+			list->beg=pomocne2;
+			list->cur=pomocne2;
+		}else{
+			pomocne=list->cur;
+			list->cur=list->beg;
+			while(list->cur->next!=pomocne){
+				list->cur=list->cur->next;
+			};
+			
+			list->cur->next=malloc(sizeof(OWN));
+			list->cur=list->cur->next;
+			list->cur->data=val;
+			list->cur->next=pomocne;
+		}
+	}
+}
 OWN *lowl_insert_right(LOWL* list, float val){
 	OWN *pomocne;
 	
-	pomocne=list->cur->next;
-	list->cur->next=malloc(sizeof(OWN));
-	list->cur=list->cur->next;
-	list->cur->data=val;
-	list->cur->next=pomocne;
+	pomocne=malloc(sizeof(OWN));
+	if(list->beg==NULL || list->cur==NULL){
+		pomocne->data=val;
+		pomocne->next=NULL;
+		list->beg=pomocne;
+		list->cur=pomocne;
+	}else{
+		pomocne=list->cur->next;
+		list->cur->next=malloc(sizeof(OWN));
+		list->cur=list->cur->next;
+		list->cur->data=val;
+		list->cur->next=pomocne;
+	}
 }
-char lowl_delete(LOWL* list);
+char lowl_delete(LOWL* list){
+	
+}
 
 
 main(){
@@ -145,5 +177,13 @@ main(){
 	lowl_cur_step_left(line);
 	lowl_print(line);
 	lowl_insert_right(line,100);
+	lowl_print(line);
+	lowl_cur_step_left(line);
+	lowl_print(line);
+	lowl_cur_step_left(line);
+	lowl_print(line);
+	lowl_insert_left(line,500);
+	lowl_print(line);
+//	lowl_delete(line);
 	lowl_print(line);
 }
