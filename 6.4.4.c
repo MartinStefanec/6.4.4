@@ -245,8 +245,9 @@ LOWL *lowl_divide(LOWL *list){
 }
 
 main(){
-	int kolko;
+	int kolko,hodnota;
 	LOWL *line,*line2;
+	int choice;
 	
 	printf("Zadajte aky dlhy zoznam chcete (ak prazdny, tak 0): ");
 	scanf("%d",&kolko);
@@ -262,21 +263,47 @@ main(){
 	}
 	
 	lowl_print(line);
-	lowl_cur_step_left(line);
-	lowl_print(line);
-	lowl_insert_right(line,100);
-	lowl_print(line);
-	lowl_cur_step_left(line);
-	lowl_print(line);
-	lowl_cur_step_left(line);
-	lowl_print(line);
-	line2=lowl_divide(line);
-	lowl_print(line);
-	lowl_print(line2);
-	lowl_insert_left(line,500);
-	lowl_print(line);
-	lowl_delete(line);
-	lowl_print(line);
-	lowl_cur_step_left(line);
-	lowl_print(line);
+	do{
+ 		printf("\nMenu:  1. cursor right  2. cursor left  3. insert right  4. insert left  5. delete  6. Divide  7. Exit and destroy : ");
+ 		scanf("%d",&choice);
+   
+ 		switch (choice){
+			case 1:	lowl_cur_step_right(line);
+					lowl_print(line);
+					break;
+			case 2:	lowl_cur_step_left(line);
+					lowl_print(line);
+					break;
+			case 3:	printf("Zadajte hotnotu: ");
+					scanf("%d",&hodnota);
+					lowl_insert_right(line,hodnota);
+					lowl_print(line);
+					break;
+			case 4:	printf("Zadajte hotnotu: ");
+					scanf("%d",&hodnota);
+					lowl_insert_left(line,hodnota);
+					lowl_print(line);
+					break;
+			case 5:	lowl_delete(line);
+					lowl_print(line);
+					break;
+			case 6:	line2=lowl_divide(line);
+					lowl_print(line);
+					lowl_print(line2);
+					break;
+			case 7:	printf("Goodbye\n");
+					lowl_destroy(line);
+					if(line2->beg!=NULL){
+						lowl_destroy(line2);
+					}
+					
+					break; 
+       
+			default: printf("Wrong Choice. Enter again\n");
+                    break;
+		} 
+  
+	} while (choice != 7);
+	
+	
 }
