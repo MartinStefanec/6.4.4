@@ -225,10 +225,28 @@ char lowl_delete(LOWL* list){
 		}			
 	}	
 }
-
+LOWL *lowl_divide(LOWL *list){
+	OWN *pomocne;
+	LOWL *list2;
+	
+	if(list->cur->next==NULL || list->beg==NULL || list->cur==NULL){
+		printf("\nUnable to divide");
+		return NULL;
+	} else {
+		pomocne=malloc(sizeof(OWN));
+		pomocne=list->cur->next;	
+		list->cur->next=NULL;
+		list2=lowl_create_empty();
+		list2->beg=pomocne;
+		list2->cur=pomocne;
+		return list2;
+	}
+	
+}
 
 main(){
 	int kolko;
+	LOWL *line,*line2;
 	
 	printf("Zadajte aky dlhy zoznam chcete (ak prazdny, tak 0): ");
 	scanf("%d",&kolko);
@@ -237,7 +255,6 @@ main(){
 		scanf("%d",&kolko);
 	}
 	
-	LOWL *line;
 	if(kolko==0){
 		line=lowl_create_empty();
 	}else{
@@ -253,6 +270,9 @@ main(){
 	lowl_print(line);
 	lowl_cur_step_left(line);
 	lowl_print(line);
+	line2=lowl_divide(line);
+	lowl_print(line);
+	lowl_print(line2);
 	lowl_insert_left(line,500);
 	lowl_print(line);
 	lowl_delete(line);
