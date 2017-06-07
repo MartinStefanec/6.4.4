@@ -32,16 +32,15 @@ LOWL *lowl_create_empty (void){
 OWN *lowl_insert_right(LOWL* list, float val){
 	OWN *pomocne;
 	
-	pomocne=malloc(sizeof(OWN));
-	if(pomocne == NULL){
-		return NULL;
-	}
-	
 	if(list->beg==NULL || list->cur==NULL){
-		pomocne->data=val;
-		pomocne->next=NULL;
-		list->beg=pomocne;
-		list->cur=pomocne;
+		list->beg=malloc(sizeof(OWN));
+		if(list->beg == NULL){
+			return NULL;
+		}
+		
+		list->beg->data=val;
+		list->beg->next=NULL;
+		list->cur=list->beg;
 	}else{
 		if(list->cur->next!=NULL){
 			pomocne=list->cur->next;
@@ -63,7 +62,6 @@ OWN *lowl_insert_right(LOWL* list, float val){
 			list->cur->data=val;
 			list->cur->next=NULL;	
 		}
-		
 	}
 	
 	return list->cur;
@@ -86,16 +84,19 @@ LOWL *lowl_create_random(unsigned int size){
 void lowl_destroy(LOWL *list){
 	OWN *pomocne;
 	
-	if(list->cur!=NULL && list->beg->next!=NULL){
+	if(list->cur!=NULL && list->beg!=NULL){
 		list->cur=list->beg;
-		do {
-			pomocne=list->cur->next;
+		if(list->cur->next==NULL){
 			free(list->cur);
-			list->cur=pomocne;
-		}	
-		while(list->cur!=NULL);
+		}else{
+			while(list->cur->next!=NULL){
+				pomocne=list->cur->next;
+				free(list->cur);
+				list->cur=pomocne;
+			}		
 		
-		free(pomocne);
+			free(pomocne);
+		}
 	}
 	
 	free(list);
@@ -143,23 +144,21 @@ char lowl_cur_step_right(LOWL *list){
 	}
 }
 OWN *lowl_insert_left(LOWL* list, float val){
-	OWN *pomocne,*pomocne2;
+	OWN *pomocne;
 	
 	if(list->beg==NULL || list->cur==NULL){
 		lowl_insert_right(list,val);
 		return list->cur;
 	}else{
 		if(list->beg==list->cur){
-			pomocne2=malloc(sizeof(OWN));
-			if(pomocne2 == NULL){
+			list->beg=malloc(sizeof(OWN));
+			if(list->beg == NULL){
 				return NULL;
 			}
 			
-			pomocne=list->beg;
-			pomocne2->data=val;
-			pomocne2->next=pomocne;
-			list->beg=pomocne2;
-			list->cur=pomocne2;
+			list->beg->data=val;
+			list->beg->next=list->cur;
+			list->cur=list->beg;
 			return list->cur;
 		}else{
 			pomocne=list->cur;
@@ -181,7 +180,7 @@ OWN *lowl_insert_left(LOWL* list, float val){
 	}
 }
 char lowl_delete(LOWL* list){	
-	OWN *next,*prev,*pomocne;
+	OWN *pomocne;
 	
 	if(list->beg==NULL || list->cur==NULL){
 		return LOWL_OK;
@@ -190,7 +189,6 @@ char lowl_delete(LOWL* list){
 			if(list->cur->next==NULL){
 				list->beg=NULL;
 				list->cur=NULL;
-				list=lowl_create_empty();
 				return LOWL_OK;
 			}else{
 				pomocne=list->cur->next;
@@ -207,43 +205,32 @@ char lowl_delete(LOWL* list){
 				free(pomocne);
 				return LOWL_OK;								
 			}else{
-				next=list->cur->next;
-				pomocne=list->cur;
-				list->cur=list->beg;
-				while(list->cur->next!=pomocne){
-					list->cur=list->cur->next;
-				};
-				
-				prev=list->cur;
-				free(pomocne);
-				prev->next=next;
-				list->cur=next;
+				pomocne=list->cur->next;
+				lowl_cur_step_left(list);
+				free(list->cur->next);
+				list->cur->next=pomocne;
+				list->cur=pomocne;
 				return LOWL_OK;
 			}
 		}			
 	}	
 }
 LOWL *lowl_divide(LOWL *list){
-	OWN *pomocne;
 	LOWL *list2;
 	
-	if(list->beg!=NULL || list->cur!=NULL){				
-		pomocne=list->cur->next;	
-		list->cur->next=NULL;
+	if(list->beg!=NULL || list->cur!=NULL){
 		list2=lowl_create_empty();
-		list2->beg=pomocne;
-		list2->cur=pomocne;
+		list2->beg=list->cur->next;
+		list2->cur=list2->beg;
+		list->cur->next=NULL;
 		lowl_print(list);
 		lowl_print(list2);
 		return list2;
 	} else {
-		
 		printf("\nUnable to divide");
 		return NULL;
 	}
-	
 }
-
 main(){
 	unsigned int kolko;
 	float hodnota;
@@ -253,11 +240,6 @@ main(){
 	srand(time(0));
 	printf("Zadajte aky dlhy zoznam chcete (ak prazdny, tak 0): ");
 	scanf("%d",&kolko);
-	while(kolko<0){
-		printf("Zadajte aky dlhy zoznam chcete (ak prazdny, tak 0): ");
-		scanf("%d",&kolko);
-	}
-
 	line=lowl_create_random(kolko);	
 	lowl_print(line);
 	
@@ -272,12 +254,12 @@ main(){
 			case 2:	lowl_cur_step_left(line);
 					lowl_print(line);
 					break;
-			case 3:	printf("Zadajte hotnotu: ");
+			case 3:	printf("Enter value: ");
 					scanf("%f",&hodnota);
 					lowl_insert_right(line,hodnota);
 					lowl_print(line);
 					break;
-			case 4:	printf("Zadajte hotnotu: ");
+			case 4:	printf("Enter value: ");
 					scanf("%f",&hodnota);
 					lowl_insert_left(line,hodnota);
 					lowl_print(line);
